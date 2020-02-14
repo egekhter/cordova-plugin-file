@@ -289,6 +289,18 @@ public class FileUtils extends CordovaPlugin {
                 }
             }, rawArgs, callbackContext);
         }
+        else if (action.equals("getFreeDiskSpaceExternal")) {
+            threadhelper( new FileOp( ){
+                public void run(JSONArray args) throws JSONException {
+                    // The getFreeDiskSpace plugin API is not documented, but some apps call it anyway via exec().
+                    // For compatibility it always returns free space in the primary external storage, and
+                    // does NOT fallback to internal store if external storage is unavailable.
+                    String fname=args.getString(0);
+                    long l = DirectoryManager.getFreeSpaceInBytes(fname);
+                    callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, l));
+                }
+            }, rawArgs, callbackContext);
+        }
         else if (action.equals("testFileExists")) {
             threadhelper( new FileOp( ){
                 public void run(JSONArray args) throws JSONException {
